@@ -23,16 +23,16 @@ typedef int (*abb_comparador)(void*, void*);
 typedef void (*abb_liberar_elemento)(void*);
 
 
-typedef struct nodo_abb {
-  void* elemento;
-  struct nodo_abb* izquierda;
-  struct nodo_abb* derecha;
+typedef struct nodo_abb{
+  	void* elemento;
+  	struct nodo_abb* izquierda;
+  	struct nodo_abb* derecha;
 } nodo_abb_t;
 
 typedef struct abb{
-  nodo_abb_t* nodo_raiz;
-  abb_comparador comparador;
-  abb_liberar_elemento destructor;
+  	nodo_abb_t* nodo_raiz;
+  	abb_comparador comparador;
+  	abb_liberar_elemento destructor;
 } abb_t;
 
 /*
@@ -50,7 +50,7 @@ abb_t* arbol_crear(abb_comparador comparador, abb_liberar_elemento destructor);
  * Devuelve 0 si pudo insertar o -1 si no pudo.
  * El arbol admite elementos con valores repetidos.
  */
- int arbol_insertar(abb_t* arbol, void* elemento);
+int arbol_insertar(abb_t* arbol, void* elemento);
 
 /*
  * Busca en el arbol un elemento igual al provisto (utilizando la
