@@ -1,9 +1,19 @@
 #ifndef __ARBOL_BINARIO_DE_BUSQUEDA_H__
 #define __ARBOL_BINARIO_DE_BUSQUEDA_H__
 
-#define ABB_RECORRER_INORDEN   0
-#define ABB_RECORRER_PREORDEN  1
-#define ABB_RECORRER_POSTORDEN 2
+// Constantes:
+	#define ABB_RECORRER_INORDEN   0
+	#define ABB_RECORRER_PREORDEN  1
+	#define ABB_RECORRER_POSTORDEN 2
+
+	#define PRIMERO_ES_MENOR -1
+	#define IGUALES 0
+	#define PRIMERO_ES_MAYOR 1
+
+	#define ERROR -1
+	#define EXITO  0
+
+	#define TAM_ARRAY 10
 
 #include <stdbool.h>
 #include <stdlib.h>

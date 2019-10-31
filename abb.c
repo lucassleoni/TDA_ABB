@@ -3,14 +3,6 @@
 #include <stdlib.h>
 #include "abb.h"
 
-#define PRIMERO_ES_MENOR -1
-#define IGUALES 0
-#define PRIMERO_ES_MAYOR 1
-
-#define ERROR -1
-#define EXITO  0
-
-
 /*
  * Crea el arbol y reserva la memoria necesaria de la estructura.
  * Comparador se utiliza para comparar dos elementos.
@@ -113,7 +105,7 @@ nodo_abb_t* nodo_menor_de_los_mayores(nodo_abb_t* raiz){
 }
 
 // Pre C.: Recibe un puntero a la raíz del árbol y al elemento a borrar, junto con el nodo padre (pasado por referencia).
-//        A su vez, recibe también las funciones de comparación  destrucción.
+//         A su vez, recibe también las funciones de comparación  destrucción.
 // Post C.: En caso que se encuentre presente en el árbol, borra el elemento pedido y reorganiza los punteros correspondiente de forma recursiva.
 int arbol_borrar_recursiva(nodo_abb_t* raiz, nodo_abb_t** nodo_padre, void* elemento_a_borrar, abb_comparador comparador, abb_liberar_elemento destructor){
     if(raiz == NULL){
@@ -139,16 +131,10 @@ int arbol_borrar_recursiva(nodo_abb_t* raiz, nodo_abb_t** nodo_padre, void* elem
         else if((raiz->derecha != NULL) && (raiz->izquierda != NULL)){
             nodo_abb_t* nodo_aux = nodo_menor_de_los_mayores(raiz->derecha);
 
-            printf("\nRaíz (a borrar): %i", *(int*)(raiz->elemento));
-            printf(" // Raíz derecha: %i", *(int*)(raiz->derecha->elemento));
-            
+            void* elemento_aux = raiz->elemento;
             raiz->elemento = nodo_aux->elemento;
-            
-            printf("\nELEMENTO RAIZ: %i", *(int*)(raiz->elemento));
-            printf(" // ELEMENTO RAIZ DERECHA: %i", *(int*)(raiz->derecha->elemento));
-            printf(" // ELEMENTO NODO: %i\n", *(int*)(nodo_aux->elemento));
-            
-            printf("Raíz derecha (primer elemento): %i\n\n", *(int*)(raiz->derecha->elemento));
+            nodo_aux->elemento = elemento_aux;
+
             return arbol_borrar_recursiva(raiz->derecha, &(raiz->derecha), nodo_aux->elemento, comparador, destructor);
         }
     }
@@ -214,7 +200,7 @@ void* arbol_buscar(abb_t* arbol, void* elemento){
  * vacío.
  */
 void* arbol_raiz(abb_t* arbol){
-	if(arbol == NULL){
+	if(arbol_vacio(arbol)){
 		return NULL;
 	}
 
@@ -225,7 +211,7 @@ void* arbol_raiz(abb_t* arbol){
 //         Y además, una entero 'posición' inicializada en 0.
 // Post C.: Recorre el árbol en el modo inorden de forma resuriva.
 void arbol_recorrido_inorden_recursiva(nodo_abb_t* raiz, void** array, int* posicion_array, int tamanio_array){
-    if(raiz == NULL){
+    if((raiz == NULL) || (array == NULL)){
         return;
     }
 
@@ -262,7 +248,7 @@ int arbol_recorrido_inorden(abb_t* arbol, void** array, int tamanio_array){
 //         Y además, una entero 'posición' inicializada en 0.
 // Post C.: Recorre el árbol en el modo inorden de forma resuriva.
 void arbol_recorrido_preorden_recursiva(nodo_abb_t* raiz, void** array, int* posicion_array, int tamanio_array){
-    if(raiz == NULL){
+    if((raiz == NULL) || (array == NULL)){
         return;
     }
 
@@ -298,7 +284,7 @@ int arbol_recorrido_preorden(abb_t* arbol, void** array, int tamanio_array){
 //         Y además, una entero 'posición' inicializada en 0.
 // Post C.: Recorre el árbol en el modo inorden de forma resuriva.
 void arbol_recorrido_postorden_recursiva(nodo_abb_t* raiz, void** array, int* posicion_array, int tamanio_array){
-    if(raiz == NULL){
+    if((raiz == NULL) || (array == NULL)){
         return;
     }
 
@@ -342,6 +328,8 @@ void arbol_destruir(abb_t* arbol){
 	while(!arbol_vacio(arbol)){
 	    arbol_borrar(arbol, arbol->nodo_raiz->elemento);
 	}
+
+    free(arbol);
 }
 
 
@@ -394,8 +382,8 @@ void arbol_postorden(nodo_abb_t* raiz, bool (*funcion)(void*, void*), void* extr
   	arbol_postorden(raiz->derecha, funcion, extra);
   	
   	if(funcion(raiz->elemento, extra)){
-  		return;
-  	}
+        return;
+    }
 }
 
 /*
