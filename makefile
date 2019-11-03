@@ -2,6 +2,7 @@ CC = gcc
 CFLAGS = -std=c99 -Wall -Wconversion -Wtype-limits -pedantic -Werror -O0
 
 compile: abb.c minipruebas_abb.c
+	clear
 	$(CC) $(CFLAGS) *.c -o abb -g 
 
 arbol: compile

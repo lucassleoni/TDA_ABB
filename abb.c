@@ -3,6 +3,20 @@
 #include <stdlib.h>
 #include "abb.h"
 
+// Constantes:
+    #define ABB_RECORRER_INORDEN   0
+    #define ABB_RECORRER_PREORDEN  1
+    #define ABB_RECORRER_POSTORDEN 2
+
+    #define PRIMERO_ES_MENOR -1
+    #define IGUALES 0
+    #define PRIMERO_ES_MAYOR 1
+
+    #define ERROR -1
+    #define EXITO  0
+
+    #define TAM_ARRAY 10
+
 /*
  * Crea el arbol y reserva la memoria necesaria de la estructura.
  * Comparador se utiliza para comparar dos elementos.
@@ -342,47 +356,68 @@ void arbol_destruir(abb_t* arbol){
 
 // Pre C.: Recibe punteros a la raíz y a la funcion booleana.
 // Post C.: Recorre el árbol siguiendo el recorrido Inorden
-void arbol_inorden(nodo_abb_t* raiz, bool (*funcion)(void*, void*), void* extra){
-	if((raiz == NULL) || (funcion == NULL)){
-    	return;
-  	}
+void arbol_inorden(nodo_abb_t* raiz, bool (*funcion)(void*, void*), void* extra, bool* elemento_encontrado){
+    if((raiz == NULL) || (funcion == NULL) || (*elemento_encontrado)){
+        return;
+    }
 
-	arbol_inorden(raiz->izquierda, funcion, extra);
+    if(!(*elemento_encontrado)){
+        arbol_inorden(raiz->izquierda, funcion, extra, elemento_encontrado);
+    }
 
-  	if(funcion(raiz->elemento, extra)){
-  		return;
-  	}
+    if(!(*elemento_encontrado)){
+        if(funcion(raiz->elemento, extra)){
+            (*elemento_encontrado) = true;
+            return;
+        }
+    }
 
-  	arbol_inorden(raiz->derecha, funcion, extra);
+    if(!(*elemento_encontrado)){
+        arbol_inorden(raiz->derecha, funcion, extra, elemento_encontrado);
+    }
 }
 
 // Pre C.: Recibe punteros a la raíz y a la funcion booleana.
 // Post C.: Recorre el árbol siguiendo el recorrido Preorden
-void arbol_preorden(nodo_abb_t* raiz, bool (*funcion)(void*, void*), void* extra){
-	if((raiz == NULL) || (funcion == NULL)){
-    	return;
-  	}
+void arbol_preorden(nodo_abb_t* raiz, bool (*funcion)(void*, void*), void* extra, bool* elemento_encontrado){
+    if((raiz == NULL) || (funcion == NULL) || (*elemento_encontrado)){
+        return;
+    }
 
-  	if(funcion(raiz->elemento, extra)){
-  		return;
-  	}
+    if(!(*elemento_encontrado)){
+        if(funcion(raiz->elemento, extra)){
+            (*elemento_encontrado) = true;
+            return;
+        }
+    }
 
-	arbol_preorden(raiz->izquierda, funcion, extra);
-  	arbol_preorden(raiz->derecha, funcion, extra);
+    if(!(*elemento_encontrado)){
+        arbol_preorden(raiz->izquierda, funcion, extra, elemento_encontrado);
+    }
+    if(!(*elemento_encontrado)){
+        arbol_preorden(raiz->derecha, funcion, extra, elemento_encontrado);
+    }
 }
 
 // Pre C.: Recibe punteros a la raíz y a la funcion booleana.
 // Post C.: Recorre el árbol siguiendo el recorrido Postorden
-void arbol_postorden(nodo_abb_t* raiz, bool (*funcion)(void*, void*), void* extra){
-	if((raiz == NULL) || (funcion == NULL)){
-    	return;
-  	}
-
-	arbol_postorden(raiz->izquierda, funcion, extra);
-  	arbol_postorden(raiz->derecha, funcion, extra);
-  	
-  	if(funcion(raiz->elemento, extra)){
+void arbol_postorden(nodo_abb_t* raiz, bool (*funcion)(void*, void*), void* extra, bool* elemento_encontrado){
+    if((raiz == NULL) || (funcion == NULL) || (*elemento_encontrado)){
         return;
+    }
+
+    if(!(*elemento_encontrado)){
+        arbol_postorden(raiz->izquierda, funcion, extra, elemento_encontrado);
+    }
+    if(!(*elemento_encontrado)){
+        arbol_postorden(raiz->derecha, funcion, extra, elemento_encontrado);
+    }
+    
+    if(!(*elemento_encontrado)){
+        if(funcion(raiz->elemento, extra)){
+            (*elemento_encontrado) = true;
+            return;
+        }
     }
 }
 
@@ -403,14 +438,16 @@ void abb_con_cada_elemento(abb_t* arbol, int recorrido, bool (*funcion)(void*, v
         return;
     }
 
+    bool elemento_encontrado = false;
+
     if(recorrido == ABB_RECORRER_INORDEN){
-    	arbol_inorden(arbol->nodo_raiz, funcion, extra);
+        arbol_inorden(arbol->nodo_raiz, funcion, extra, &elemento_encontrado);
     }
     else if(recorrido == ABB_RECORRER_PREORDEN){
-    	arbol_preorden(arbol->nodo_raiz, funcion, extra);
+        arbol_preorden(arbol->nodo_raiz, funcion, extra, &elemento_encontrado);
     }
     else if(recorrido == ABB_RECORRER_POSTORDEN){
-    	arbol_postorden(arbol->nodo_raiz, funcion, extra);
+        arbol_postorden(arbol->nodo_raiz, funcion, extra, &elemento_encontrado);
     }
     
     return;
